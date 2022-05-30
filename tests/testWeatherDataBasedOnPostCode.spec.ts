@@ -3,20 +3,24 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const postalCode = 2150
+const postalCode = [2150, 2000]
+const cityName = ['Harris Park', 'Rosario']
 
 //Happy path Scenario
-test('should get current weather data based on postal code @postalCodeTest', async ({ request }) => {
-    const response = await request.get(`current?postal_code=${postalCode}&key=${process.env.API_KEY}`)
+for (const pc of postalCode) {
+    test(`should get current weather data based on postal code ${pc} @postalCodeTest`, async ({ request }) => {
+        const response = await request.get(`current?postal_code=${pc}&key=${process.env.API_KEY}`)
+    
+        await expect(response.status()).toBe(200)
+    
+        const jsonResponse = await response.json()
+    
+        await expect(jsonResponse.data[0].city_name).toEqual(cityName[`${postalCode.indexOf(pc)}`])
+    
+        console.log(`Temperature at location with postal code ${pc} is: ` + jsonResponse.data[0].temp)
+    })
+}
 
-    await expect(response.status()).toBe(200)
-
-    const jsonResponse = await response.json()
-
-    await expect(jsonResponse.data[0].city_name).toEqual('Harris Park')
-
-    console.log(`Temperature at location with postal code ${postalCode} is: ` + jsonResponse.data[0].temp)
-})
 
 //Test with no API Key
 test('should get response code for not providing api key in URL @postalCodeTest_UnAuthorized', async ({ request }) => {
