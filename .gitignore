@@ -20,3 +20,6 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+/test-results/
+/playwright-report/
+/playwright/.cache/
